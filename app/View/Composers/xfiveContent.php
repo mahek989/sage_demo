@@ -116,18 +116,6 @@ class xfiveContent extends Composer
                     array_push($data, $this_content);
                 }
                 elseif($content['acf_fc_layout']=='testimonial'){
-                    $this_content = (object) [
-                        'layout' => $content['acf_fc_layout'],
-                        'heading' => $content['heading'],                                                          
-                        'sub_heading' => $content['sub_heading'],                                                          
-                        'hide_testimonial' => $content['hide_testimonial'],                                                          
-                        'id' => $content['id'],
-                        'extra_class' => $content['extra_class'],
-                        'hide_section' => $content['hide_section']
-                    ];
-                    array_push($data, $this_content);
-                }
-                elseif($content['acf_fc_layout']=='testimonial'){
                     $all_testimonial = array();
                     $usp_args = array(
                         'post_type' => 'testimonial',
@@ -135,24 +123,20 @@ class xfiveContent extends Composer
                         'post_status' => 'publish',
                         'orderby' => 'date',
                         'order' => 'ASC',
-                        'tax_query' => array(
-                            array(
-                                'taxonomy' => 'testimonial_category', //double check your taxonomy name in you dd 
-                                'field'    => 'id',
-                                'terms'    => $content['testimonial_category'],
-                            ),
-                        ),
-
                     );
                     $usp_query = new \WP_Query(  $usp_args );
-
                     if($usp_query->have_posts()) {
                         while ( $usp_query->have_posts() ) : $usp_query->the_post();                            
                             $all_testimonial[] = array(
                                 'id' => get_the_ID(),
-                                'title' => get_the_title(),                               
-                                'content' => get_the_content(),                             
-                                'url' => get_the_permalink(),
+                                'content'=>get_the_content(),
+                                'theme_image'=>get_the_post_thumbnail_url(),
+                                'title' => get_field('name'),                                                     
+                                'video' => get_field('video'),                            
+                                'rating' => get_field('rating'),                            
+                                'extra_id' => get_field('id'),
+                                'extra_class' => get_field('extra_class'),
+                                'hide_saction' => get_field('hide_saction'),
                             );
                         endwhile;
                         wp_reset_postdata();
@@ -160,9 +144,10 @@ class xfiveContent extends Composer
 
                     $this_content = (object) [
                         'layout' => $content['acf_fc_layout'],
-                        'bg_image' => $content['bg_image'],
-                        'bg_color_style' => $content['bg_color_style'], 
-                        'testimonial_category' => $content['testimonial_category'],
+                        'heading' => $content['heading'],
+                        'sub_heading' => $content['sub_heading'], 
+                        'hide_testimonial' => $content['hide_testimonial'],
+                        'background_image' => $content['background_image'],
                         'testimonial_data' => $all_testimonial,                                     
                         'id' => $content['id'],
                         'extra_class' => $content['extra_class'],
